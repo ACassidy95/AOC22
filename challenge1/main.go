@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -22,6 +23,9 @@ func main() {
 	file.Close()
 	fattestElfIdx := findElfWithMostCalories(caloriesPerElf)
 	fmt.Printf("The fattest elf is elf number: %d. He is carrying %d calories\n", fattestElfIdx+1, caloriesPerElf[fattestElfIdx])
+	sort.Ints(caloriesPerElf)
+	topThreeCalories := sumCalories(caloriesPerElf[len(caloriesPerElf)-3:])
+	fmt.Printf("The top 3 fattest elves are carrying %d calories\n", topThreeCalories)
 }
 
 func countCaloriesPerElf(F *os.File) ([]int, error) {
@@ -42,6 +46,7 @@ func countCaloriesPerElf(F *os.File) ([]int, error) {
 		}
 		currentElfCalories += calorieVal
 	}
+	caloriesPerElf = append(caloriesPerElf, currentElfCalories)
 
 	return caloriesPerElf, nil
 }
@@ -56,4 +61,12 @@ func findElfWithMostCalories(caloriesPerElf []int) int {
 		}
 	}
 	return maxElf
+}
+
+func sumCalories(calories []int) int {
+	sum := 0
+	for _, item := range calories {
+		sum += item
+	}
+	return sum
 }
