@@ -56,15 +56,24 @@ var stateMapping = map[Move][]Move{
 }
 
 func main() {
+	// Challenge 2-1
 	file, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
 	encodedMoveScore := calculateScoreFromEncodedMove(file)
-	desiredResultScore := calculateScoreFromDesiredResult(file)
 	file.Close()
 	fmt.Printf("Total score from encoded moves: %d\n", encodedMoveScore)
+
+	// Challenge 2-2
+	file, err = os.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	desiredResultScore := calculateScoreFromDesiredResult(file)
+	file.Close()
 	fmt.Printf("Total score from desired result: %d\n", desiredResultScore)
 }
 
@@ -104,7 +113,7 @@ func calculateTurnPointsFromMoves(self, opponent string) int {
 func calculateTurnPointsFromDesiredResult(result, opponentMove string) int {
 	desiredResult := desiredResultMapping[result]
 	oppMove := moveMapping[opponentMove]
-	resultToMoveIdx := resultValue(desiredResult)
+	resultToMoveIdx := resultValue(desiredResult) / 3
 	myMove := stateMapping[oppMove][resultToMoveIdx]
 	return moveValue(myMove) + resultValue(desiredResult)
 }
