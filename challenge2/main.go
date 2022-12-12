@@ -20,7 +20,7 @@ const (
 	WIN
 )
 
-var move_mapping = map[string]int{
+var moveMapping = map[string]int{
 	"A": ROCK,
 	"B": PAPER,
 	"C": SCISSORS,
@@ -29,7 +29,7 @@ var move_mapping = map[string]int{
 	"Z": SCISSORS,
 }
 
-var rule_mapping = map[int][]int{
+var ruleMapping = map[int][]int{
 	ROCK:     {DRAW, LOSS, WIN},
 	PAPER:    {WIN, DRAW, LOSS},
 	SCISSORS: {LOSS, WIN, DRAW},
@@ -60,8 +60,8 @@ func calculateScore(F *os.File) int {
 }
 
 func calculateTurnPoints(m1, m2 string) int {
-	myMove := move_mapping[m1]
-	oppMove := move_mapping[m2]
-	myState := rule_mapping[myMove][oppMove]
+	myMove := moveMapping[m1]
+	oppMove := moveMapping[m2]
+	myState := ruleMapping[myMove][oppMove]
 	return myMove + myState
 }
