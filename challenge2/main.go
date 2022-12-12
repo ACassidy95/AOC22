@@ -9,6 +9,7 @@ import (
 )
 
 type Move int
+type Result int
 
 const (
 	ROCK Move = iota + 1
@@ -17,7 +18,7 @@ const (
 )
 
 const (
-	LOSS = 3 * iota
+	LOSS Result = 3 * iota
 	DRAW
 	WIN
 )
@@ -34,7 +35,8 @@ var encodedMoveMapping = map[string]string{
 	"Z": "C",
 }
 
-var ruleMapping = map[Move][]int{
+var ruleMapping = map[Move][]Result{
+	//          R  ,  P   , S
 	ROCK:     {DRAW, LOSS, WIN},
 	PAPER:    {WIN, DRAW, LOSS},
 	SCISSORS: {LOSS, WIN, DRAW},
@@ -57,21 +59,22 @@ func calculateScore(F *os.File) int {
 	for scanner.Scan() {
 		line := scanner.Text()
 		moves := strings.Split(line, " ")
-
-		// Add 1 to each hand's points since move constants start at 0
 		totalPoints += calculateTurnPoints(moves[1], moves[0])
 	}
 	return totalPoints
 }
 
-func calculateTurnPoints(m1, m2 string) int {
-	myMove := moveMapping[encodedMoveMapping[m1]]
-	oppMove := moveMapping[m2]
-	myState := ruleMapping[myMove][moveValue(oppMove)-1]
-	return moveValue(myMove) + myState
+func calculateTurnPoints(self, opponent string) int {
+	myMove := moveMapping[encodedMoveMapping[self]]
+	oppMove := moveMapping[opponent]
+	myResult := ruleMapping[myMove][moveValue(oppMove)-1]
+	return moveValue(myMove) + resultValue(myResult)
 }
 
 func moveValue(m Move) int {
-	intVal := int(m)
-	return intVal
+	return int(m)
+}
+
+func resultValue(r Result) int {
+	return int(r)
 }
