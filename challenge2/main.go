@@ -8,8 +8,10 @@ import (
 	"strings"
 )
 
+type Move int
+
 const (
-	ROCK = iota
+	ROCK Move = iota + 1
 	PAPER
 	SCISSORS
 )
@@ -20,16 +22,19 @@ const (
 	WIN
 )
 
-var moveMapping = map[string]int{
+var moveMapping = map[string]Move{
 	"A": ROCK,
 	"B": PAPER,
 	"C": SCISSORS,
-	"X": ROCK,
-	"Y": PAPER,
-	"Z": SCISSORS,
 }
 
-var ruleMapping = map[int][]int{
+var encodedMoveMapping = map[string]string{
+	"X": "A",
+	"Y": "B",
+	"Z": "C",
+}
+
+var ruleMapping = map[Move][]int{
 	ROCK:     {DRAW, LOSS, WIN},
 	PAPER:    {WIN, DRAW, LOSS},
 	SCISSORS: {LOSS, WIN, DRAW},
@@ -54,14 +59,19 @@ func calculateScore(F *os.File) int {
 		moves := strings.Split(line, " ")
 
 		// Add 1 to each hand's points since move constants start at 0
-		totalPoints += calculateTurnPoints(moves[1], moves[0]) + 1
+		totalPoints += calculateTurnPoints(moves[1], moves[0])
 	}
 	return totalPoints
 }
 
 func calculateTurnPoints(m1, m2 string) int {
-	myMove := moveMapping[m1]
+	myMove := moveMapping[encodedMoveMapping[m1]]
 	oppMove := moveMapping[m2]
-	myState := ruleMapping[myMove][oppMove]
-	return myMove + myState
+	myState := ruleMapping[myMove][moveValue(oppMove)-1]
+	return moveValue(myMove) + myState
+}
+
+func moveValue(m Move) int {
+	intVal := int(m)
+	return intVal
 }
