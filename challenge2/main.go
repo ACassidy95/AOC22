@@ -29,6 +29,12 @@ var moveMapping = map[string]Move{
 	"C": SCISSORS,
 }
 
+var desiredResultMapping = map[string]Result{
+	"X": LOSS,
+	"Y": DRAW,
+	"Z": WIN,
+}
+
 var encodedMoveMapping = map[string]string{
 	"X": "A",
 	"Y": "B",
@@ -70,20 +76,37 @@ func calculateScoreFromEncodedMove(F *os.File) int {
 		moves := strings.Split(line, " ")
 		selfMove := moves[1]
 		oppMove := moves[0]
-		totalPoints += calculateTurnPoints(selfMove, oppMove)
+		totalPoints += calculateTurnPointsFromMoves(selfMove, oppMove)
 	}
 	return totalPoints
 }
 
 func calculateScoreFromDesiredResult(F *os.File) int {
-
+	scanner := bufio.NewScanner(F)
+	totalPoints := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		turn := strings.Split(line, " ")
+		desiredResult := turn[1]
+		oppMove := turn[0]
+		totalPoints += calculateTurnPointsFromDesiredResult(desiredResult, oppMove)
+	}
+	return totalPoints
 }
 
-func calculateTurnPoints(self, opponent string) int {
+func calculateTurnPointsFromMoves(self, opponent string) int {
 	myMove := moveMapping[encodedMoveMapping[self]]
 	oppMove := moveMapping[opponent]
 	myResult := ruleMapping[myMove][moveValue(oppMove)-1]
 	return moveValue(myMove) + resultValue(myResult)
+}
+
+func calculateTurnPointsFromDesiredResult(result, opponentMove string) int {
+	desiredResult := desiredResultMapping[result]
+	oppMove := moveMapping[opponentMove]
+	resultToMoveIdx := resultValue(desiredResult)
+	myMove := stateMapping[oppMove][resultToMoveIdx]
+	return moveValue(myMove) + resultValue(desiredResult)
 }
 
 func moveValue(m Move) int {
