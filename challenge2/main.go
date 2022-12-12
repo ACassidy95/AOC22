@@ -42,26 +42,41 @@ var ruleMapping = map[Move][]Result{
 	SCISSORS: {LOSS, WIN, DRAW},
 }
 
+var stateMapping = map[Move][]Move{
+	//           L  ,  D  ,  W
+	ROCK:     {PAPER, ROCK, SCISSORS},
+	PAPER:    {SCISSORS, PAPER, ROCK},
+	SCISSORS: {ROCK, SCISSORS, PAPER},
+}
+
 func main() {
 	file, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	score := calculateScore(file)
+	encodedMoveScore := calculateScoreFromEncodedMove(file)
+	desiredResultScore := calculateScoreFromDesiredResult(file)
 	file.Close()
-	fmt.Printf("Total score: %d\n", score)
+	fmt.Printf("Total score from encoded moves: %d\n", encodedMoveScore)
+	fmt.Printf("Total score from desired result: %d\n", desiredResultScore)
 }
 
-func calculateScore(F *os.File) int {
+func calculateScoreFromEncodedMove(F *os.File) int {
 	scanner := bufio.NewScanner(F)
 	totalPoints := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		moves := strings.Split(line, " ")
-		totalPoints += calculateTurnPoints(moves[1], moves[0])
+		selfMove := moves[1]
+		oppMove := moves[0]
+		totalPoints += calculateTurnPoints(selfMove, oppMove)
 	}
 	return totalPoints
+}
+
+func calculateScoreFromDesiredResult(F *os.File) int {
+
 }
 
 func calculateTurnPoints(self, opponent string) int {
