@@ -48,11 +48,11 @@ var ruleMapping = map[Move][]Result{
 	SCISSORS: {LOSS, WIN, DRAW},
 }
 
-var stateMapping = map[Move][]Move{
+var moveToAchieveResultMapping = map[Move][]Move{
 	//           L  ,  D  ,  W
-	ROCK:     {PAPER, ROCK, SCISSORS},
-	PAPER:    {SCISSORS, PAPER, ROCK},
-	SCISSORS: {ROCK, SCISSORS, PAPER},
+	ROCK:     {SCISSORS, ROCK, PAPER},
+	PAPER:    {ROCK, PAPER, SCISSORS},
+	SCISSORS: {PAPER, SCISSORS, ROCK},
 }
 
 func main() {
@@ -113,8 +113,11 @@ func calculateTurnPointsFromMoves(self, opponent string) int {
 func calculateTurnPointsFromDesiredResult(result, opponentMove string) int {
 	desiredResult := desiredResultMapping[result]
 	oppMove := moveMapping[opponentMove]
+
+	// Dividing the desired result value by 3 yields the index of the move to take
+	// as given in stateMapping
 	resultToMoveIdx := resultValue(desiredResult) / 3
-	myMove := stateMapping[oppMove][resultToMoveIdx]
+	myMove := moveToAchieveResultMapping[oppMove][resultToMoveIdx]
 	return moveValue(myMove) + resultValue(desiredResult)
 }
 
