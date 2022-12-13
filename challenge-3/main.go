@@ -66,11 +66,13 @@ func prioritiseGroupBadges(F *os.File) int {
 
 func findGroupBadge(rucksackGroup [][]byte) byte {
 	var groupBadge byte
-	rucksackGroupIntersection := make(map[byte]bool)
+	var rucksackGroupIntersection map[byte]bool
 
-	// Iteratively intersect sets constructed from the rucksack contents
+	// Union the empty "Intersection" set with the first rucksake set then
+	// iteratively intersect sets constructed from the rucksack contents
 	// in order to find the common element across all rucksacks in group
-	for _, rucksack := range rucksackGroup {
+	rucksackGroupIntersection = contentSetUnion(rucksackGroupIntersection, contentsSet(rucksackGroup[0]))
+	for _, rucksack := range rucksackGroup[1:] {
 		rucksackSet := contentsSet(rucksack)
 		rucksackGroupIntersection = contentSetIntersection(rucksackGroupIntersection, rucksackSet)
 	}
@@ -109,6 +111,17 @@ func contentSetIntersection(c1, c2 map[byte]bool) map[byte]bool {
 		}
 	}
 	return intersection
+}
+
+func contentSetUnion(c1, c2 map[byte]bool) map[byte]bool {
+	union := make(map[byte]bool)
+	for k := range c1 {
+		union[k] = true
+	}
+	for k := range c2 {
+		union[k] = true
+	}
+	return union
 }
 
 func calculateItemTypePriority(itemType byte) int {
