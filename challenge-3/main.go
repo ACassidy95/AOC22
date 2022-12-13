@@ -98,6 +98,11 @@ func contentsSet(contents []byte) map[byte]bool {
 
 func contentSetIntersection(c1, c2 map[byte]bool) map[byte]bool {
 	intersection := make(map[byte]bool)
+
+	if len(c1) < len(c2) {
+		c1, c2 = c2, c1
+	}
+
 	for k := range c1 {
 		if c2[k] {
 			intersection[k] = true
