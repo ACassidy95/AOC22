@@ -115,7 +115,7 @@ func calculateTurnPointsFromDesiredResult(result, opponentMove string) int {
 	oppMove := moveMapping[opponentMove]
 
 	// Dividing the desired result value by 3 yields the index of the move to take
-	// as given in stateMapping
+	// as given in moveToAchieveResultMapping
 	resultToMoveIdx := resultValue(desiredResult) / 3
 	myMove := moveToAchieveResultMapping[oppMove][resultToMoveIdx]
 	return moveValue(myMove) + resultValue(desiredResult)
