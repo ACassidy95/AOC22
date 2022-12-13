@@ -22,7 +22,7 @@ build()
 
     go mod init $PROG_NAME
     go mod tidy
-    go build $PROG_NAME main.go
+    go build -v -o $PROG_NAME main.go
     chmod u+x $PROG_NAME
 
     echo "Build complete"
