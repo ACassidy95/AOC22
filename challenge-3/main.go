@@ -54,13 +54,12 @@ func prioritiseGroupBadges(F *os.File) int {
 	prioritySum := 0
 	for scanner.Scan() {
 		rucksack := []byte(scanner.Text())
-		if len(rucksack) == 0 {
+		currentGroup = append(currentGroup, rucksack)
+		if len(currentGroup) == 3 {
 			groupBadge := findGroupBadge(currentGroup)
 			prioritySum += calculateItemTypePriority(groupBadge)
 			currentGroup = nil
-			continue
 		}
-		currentGroup = append(currentGroup, rucksack)
 	}
 	return prioritySum
 }
