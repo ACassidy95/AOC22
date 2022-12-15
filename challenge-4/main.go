@@ -57,7 +57,7 @@ func findRedundantRotas(F *os.File) int {
 		elfRotaB := rota[1]
 		elfRotaALowerBound, elfRotaAUpperBound := convertRotaToIntBounds(elfRotaA)
 		elfRotaBLowerBound, elfRotaBUpperBound := convertRotaToIntBounds(elfRotaB)
-		overlap := rotaPartiallyRedundant(elfRotaALowerBound, elfRotaAUpperBound, elfRotaBLowerBound, elfRotaBUpperBound)
+		overlap := rotaRedundant(elfRotaALowerBound, elfRotaAUpperBound, elfRotaBLowerBound, elfRotaBUpperBound)
 		if overlap {
 			redundantRotaCount++
 		}
@@ -92,7 +92,7 @@ func rotaTotallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int
 	return totalOverlap
 }
 
-func rotaPartiallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
+func rotaRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
 	partialOverlap := true
 	if !(upperBoundB < lowerBoundA || lowerBoundB > upperBoundA) {
 		partialOverlap = false
