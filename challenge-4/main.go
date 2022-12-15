@@ -50,5 +50,16 @@ func convertRotaToIntBounds(rota string) (int, int) {
 
 func rotaTotallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
 	totalOverlap := true
+	lesserLowerBound, greaterLowerBound := lowerBoundA, lowerBoundB
+	lesserUpperBound, greaterUpperBound := upperBoundA, upperBoundB
+	if greaterLowerBound <= lesserLowerBound {
+		lesserLowerBound, greaterLowerBound = greaterLowerBound, lesserLowerBound
+	}
+	if greaterUpperBound <= lesserUpperBound {
+		lesserUpperBound, greaterUpperBound = greaterUpperBound, lesserUpperBound
+	}
+	if !(lesserLowerBound <= greaterLowerBound && lesserUpperBound <= greaterUpperBound) {
+		totalOverlap = false
+	}
 	return totalOverlap
 }
