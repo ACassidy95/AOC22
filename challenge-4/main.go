@@ -17,7 +17,7 @@ func main() {
 	}
 	redundantRotaCount := findRedundantRotas(file)
 	file.Close()
-	fmt.Printf("The number of fully redundant rotas is: %d", redundantRotaCount)
+	fmt.Printf("The number of fully redundant rotas is: %d\n", redundantRotaCount)
 }
 
 func findRedundantRotas(F *os.File) int {
@@ -50,16 +50,16 @@ func convertRotaToIntBounds(rota string) (int, int) {
 
 func rotaTotallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
 	totalOverlap := true
-	lesserLowerBound, greaterLowerBound := lowerBoundA, lowerBoundB
-	lesserUpperBound, greaterUpperBound := upperBoundA, upperBoundB
-	if greaterLowerBound <= lesserLowerBound {
-		lesserLowerBound, greaterLowerBound = greaterLowerBound, lesserLowerBound
-	}
-	if greaterUpperBound <= lesserUpperBound {
-		lesserUpperBound, greaterUpperBound = greaterUpperBound, lesserUpperBound
-	}
-	if !(lesserLowerBound <= greaterLowerBound && lesserUpperBound <= greaterUpperBound) {
-		totalOverlap = false
+	rotaAWidth := upperBoundA - lowerBoundA
+	rotaBWidth := upperBoundB - lowerBoundB
+	if rotaAWidth <= rotaBWidth {
+		if !(lowerBoundB <= lowerBoundA && upperBoundA <= upperBoundB) {
+			totalOverlap = false
+		}
+	} else {
+		if !(lowerBoundA <= lowerBoundB && upperBoundB <= upperBoundA) {
+			totalOverlap = false
+		}
 	}
 	return totalOverlap
 }
