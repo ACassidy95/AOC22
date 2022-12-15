@@ -16,9 +16,9 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	redundantRotaCount := findFullyRedundantRotas(file)
+	fullyRedundantRotaCount := findFullyRedundantRotas(file)
 	file.Close()
-	fmt.Printf("The number of fully redundant rotas is: %d\n", redundantRotaCount)
+	fmt.Printf("The number of fully redundant rotas is: %d\n", fullyRedundantRotaCount)
 
 	// Challenge 4-2
 	file, err = os.Open(os.Args[1])
@@ -26,9 +26,9 @@ func main() {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	partiallyRedundantRotaCount := findRedundantRotas(file)
+	redundantRotaCount := findRedundantRotas(file)
 	file.Close()
-	fmt.Printf("The number of fully redundant rotas is: %d\n", partiallyRedundantRotaCount)
+	fmt.Printf("The number of redundant rotas is: %d\n", redundantRotaCount)
 }
 
 func findFullyRedundantRotas(F *os.File) int {
