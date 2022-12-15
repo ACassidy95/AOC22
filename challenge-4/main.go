@@ -10,14 +10,42 @@ import (
 )
 
 func main() {
+	// Challenge 4-1
 	file, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
 	}
-	redundantRotaCount := findRedundantRotas(file)
+	redundantRotaCount := findFullyRedundantRotas(file)
 	file.Close()
 	fmt.Printf("The number of fully redundant rotas is: %d\n", redundantRotaCount)
+
+	// Challenge 4-2
+	file, err = os.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	partiallyRedundantRotaCount := findRedundantRotas(file)
+	file.Close()
+	fmt.Printf("The number of fully redundant rotas is: %d\n", partiallyRedundantRotaCount)
+}
+
+func findFullyRedundantRotas(F *os.File) int {
+	redundantRotaCount := 0
+	scanner := bufio.NewScanner(F)
+	for scanner.Scan() {
+		rota := strings.Split(scanner.Text(), ",")
+		elfRotaA := rota[0]
+		elfRotaB := rota[1]
+		elfRotaALowerBound, elfRotaAUpperBound := convertRotaToIntBounds(elfRotaA)
+		elfRotaBLowerBound, elfRotaBUpperBound := convertRotaToIntBounds(elfRotaB)
+		totalOverlap := rotaTotallyRedundant(elfRotaALowerBound, elfRotaAUpperBound, elfRotaBLowerBound, elfRotaBUpperBound)
+		if totalOverlap {
+			redundantRotaCount++
+		}
+	}
+	return redundantRotaCount
 }
 
 func findRedundantRotas(F *os.File) int {
@@ -29,8 +57,8 @@ func findRedundantRotas(F *os.File) int {
 		elfRotaB := rota[1]
 		elfRotaALowerBound, elfRotaAUpperBound := convertRotaToIntBounds(elfRotaA)
 		elfRotaBLowerBound, elfRotaBUpperBound := convertRotaToIntBounds(elfRotaB)
-		totalOverlap := rotaTotallyRedundant(elfRotaALowerBound, elfRotaAUpperBound, elfRotaBLowerBound, elfRotaBUpperBound)
-		if totalOverlap {
+		overlap := rotaPartiallyRedundant(elfRotaALowerBound, elfRotaAUpperBound, elfRotaBLowerBound, elfRotaBUpperBound)
+		if overlap {
 			redundantRotaCount++
 		}
 	}
@@ -62,4 +90,12 @@ func rotaTotallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int
 		}
 	}
 	return totalOverlap
+}
+
+func rotaPartiallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
+	partialOverlap := true
+	if !(upperBoundB < lowerBoundA || lowerBoundB > upperBoundA) {
+		partialOverlap = false
+	}
+	return partialOverlap
 }
