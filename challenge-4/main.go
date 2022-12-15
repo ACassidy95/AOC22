@@ -93,9 +93,15 @@ func rotaTotallyRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int
 }
 
 func rotaRedundant(lowerBoundA, upperBoundA, lowerBoundB, upperBoundB int) bool {
-	partialOverlap := true
-	if !(upperBoundB < lowerBoundA || lowerBoundB > upperBoundA) {
-		partialOverlap = false
+	partialOverlap := false
+	// If either of the bounds of one range are contained within the other range
+	// then there is an overlap
+	if (lowerBoundA <= lowerBoundB && lowerBoundB <= upperBoundA) ||
+		(lowerBoundA <= upperBoundB && upperBoundB <= upperBoundA) {
+		partialOverlap = true
+	} else if (lowerBoundB <= lowerBoundA && lowerBoundA <= upperBoundB) ||
+		(lowerBoundB <= upperBoundA && upperBoundA <= upperBoundB) {
+		partialOverlap = true
 	}
 	return partialOverlap
 }
