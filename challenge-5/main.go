@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -53,11 +54,17 @@ func parseCrateConfig(crateConfig string) [][]string {
 		crates = append(crates, emptyStack)
 	}
 
+	// The stack each crate should be placed in can be gotten by
+	// retrieving the character in crateNums at the same index as
+	// the alphabetic char on the current line
+	// Crates are prepended to the 'stack' here since input is read
+	// top to bottom
 	for _, line := range crateStrata {
 		lineBytes := []byte(line)
 		for idx, char := range lineBytes {
 			if char >= 'A' && char <= 'Z' {
-				crateStack := crates[crateNums[idx]]
+				stackIdx, _ := strconv.Atoi(string(crateNums[idx]))
+				crateStack := crates[stackIdx]
 				crateStack = append([]string{string(char)}, crateStack...)
 			}
 		}
