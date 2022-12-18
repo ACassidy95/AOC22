@@ -27,17 +27,20 @@ func main() {
 }
 
 func readInput(F *os.File) (string, string) {
-	var crateConfigBuffer, movesBuffer bytes.Buffer
+	var crateConfigBuffer, movesBuffer, currentBuffer bytes.Buffer
 	var crateConfig, moves string
 	scanner := bufio.NewScanner(F)
-	currentBuffer := crateConfigBuffer
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line == "" {
+			crateConfigBuffer = currentBuffer
 			currentBuffer = movesBuffer
+			continue
 		}
+		line = line + "\n"
 		currentBuffer.WriteString(line)
 	}
+	movesBuffer = currentBuffer
 	crateConfig = crateConfigBuffer.String()
 	moves = movesBuffer.String()
 	return crateConfig, moves
