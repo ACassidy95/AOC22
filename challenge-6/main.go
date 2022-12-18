@@ -30,5 +30,26 @@ func readInput(F *os.File) string {
 }
 
 func findEndOfPacketStartMarker(signal string) int {
-	return 1
+	var eopsIdx int
+	signalBytes := []byte(signal)
+	for i := 0; i < len(signalBytes)-windowSize; i++ {
+		window := signalBytes[i : i+windowSize]
+		uniqueWindowChars := make(map[byte]bool)
+		for _, char := range window {
+			// If the current char in the window already exists in the
+			// set of characters constructed from the window, then the current
+			// window cannot be a protocol start marker and the next window can be checked
+			_, ok := uniqueWindowChars[char]
+			if ok {
+				break
+			} else {
+				uniqueWindowChars[char] = true
+			}
+		}
+		if len(uniqueWindowChars) == windowSize {
+			eopsIdx = i + windowSize
+			break
+		}
+	}
+	return eopsIdx
 }
