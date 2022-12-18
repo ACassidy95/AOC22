@@ -20,8 +20,15 @@ func main() {
 	file.Close()
 	crates := parseCrateConfig(crateConfig)
 	moves := parseMoveConfig(moveConfig)
-	crates = moveCrates(moves, crates)
-	topCrates := getTopCrates(crates)
+
+	// Challenge 5-1
+	movedCrates := moveCratesOneByOne(moves, crates)
+	topCrates := getTopCrates(movedCrates)
+	fmt.Printf("The top crates are: %s\n", topCrates)
+
+	// Challenge 5-2
+	movedCrates = moveCratesInGroups(moves, crates)
+	topCrates = getTopCrates(movedCrates)
 	fmt.Printf("The top crates are: %s\n", topCrates)
 }
 
@@ -124,7 +131,7 @@ func parseMoveConfig(moveConfig string) [][]int {
 	return moves
 }
 
-func moveCrates(moves [][]int, crates [][]string) [][]string {
+func moveCratesOneByOne(moves [][]int, crates [][]string) [][]string {
 	for _, move := range moves {
 		nCrates := move[0]
 		src := move[1]
@@ -133,7 +140,7 @@ func moveCrates(moves [][]int, crates [][]string) [][]string {
 		srcStack := crates[src]
 		destStack := crates[dest]
 		for i := 0; i < nCrates; i++ {
-			srcStack, destStack = moveCrate(srcStack, destStack)
+			srcStack, destStack = moveSingleCrate(srcStack, destStack)
 		}
 		crates[src] = srcStack
 		crates[dest] = destStack
@@ -141,10 +148,18 @@ func moveCrates(moves [][]int, crates [][]string) [][]string {
 	return crates
 }
 
-func moveCrate(srcStack, destStack []string) ([]string, []string) {
+func moveSingleCrate(srcStack, destStack []string) ([]string, []string) {
 	crate := srcStack[len(srcStack)-1]
 	srcStack = srcStack[:len(srcStack)-1]
 	destStack = append(destStack, crate)
+	return srcStack, destStack
+}
+
+func moveCratesInGroups(moves [][]int, crates [][]string) [][]string {
+	return crates
+}
+
+func moveCrateGroup(srcStack, destStack []string, numCrates int) ([]string, []string) {
 	return srcStack, destStack
 }
 
