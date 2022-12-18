@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 )
@@ -15,6 +16,8 @@ func main() {
 		os.Exit(1)
 	}
 	signal := readInput(file)
+	packetStart := findEndOfPacketStartMarker(signal)
+	fmt.Printf("Packet starts after character %d\n", packetStart)
 }
 
 func readInput(F *os.File) string {
@@ -24,4 +27,8 @@ func readInput(F *os.File) string {
 		signal += scanner.Text()
 	}
 	return signal
+}
+
+func findEndOfPacketStartMarker(signal string) int {
+	return 1
 }
