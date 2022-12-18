@@ -20,7 +20,8 @@ func main() {
 	file.Close()
 	crates := parseCrateConfig(crateConfig)
 	moves := parseMoveConfig(moveConfig)
-	topCrates := moveCrates(moves, crates)
+	crates = moveCrates(moves, crates)
+	topCrates := getTopCrates(crates)
 	fmt.Printf("The top crates are: %s\n", topCrates)
 }
 
@@ -123,8 +124,7 @@ func parseMoveConfig(moveConfig string) [][]int {
 	return moves
 }
 
-func moveCrates(moves [][]int, crates [][]string) string {
-	var topCrates bytes.Buffer
+func moveCrates(moves [][]int, crates [][]string) [][]string {
 	for _, move := range moves {
 		nCrates := move[0]
 		src := move[1]
@@ -133,13 +133,22 @@ func moveCrates(moves [][]int, crates [][]string) string {
 		srcStack := crates[src]
 		destStack := crates[dest]
 		for i := 0; i < nCrates; i++ {
-			moveCrate(srcStack, destStack)
+			srcStack, destStack = moveCrate(srcStack, destStack)
 		}
+		crates[src] = srcStack
+		crates[dest] = destStack
 	}
-	return topCrates.String()
+	return crates
 }
 
-func moveCrate(srcStack, destStack []string) {
+func moveCrate(srcStack, destStack []string) ([]string, []string) {
 	crate := srcStack[len(srcStack)-1]
+	srcStack = srcStack[:len(srcStack)-1]
 	destStack = append(destStack, crate)
+	return srcStack, destStack
+}
+
+func getTopCrates(crateStacks [][]string) string {
+	var topCrates bytes.Buffer
+	return topCrates.String()
 }
