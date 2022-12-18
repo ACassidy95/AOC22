@@ -184,9 +184,7 @@ func moveCrateGroup(srcStack, destStack []string, numCrates int) ([]string, []st
 	// Crates acts as a queue for the lifted crates
 	// which can simply be appended to destStack in order
 	// for the desired effect
-	for _, crate := range crates {
-		destStack = append(destStack, crate)
-	}
+	destStack = append(destStack, crates...)
 	return srcStack, destStack
 }
 
