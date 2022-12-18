@@ -98,6 +98,10 @@ func parseMoveConfig(moveConfig string) [][]int {
 	var emptyMove []int
 	movesSplit := strings.Split(moveConfig, "\n")
 
+	// read function leaves dangling newline in moves config
+	// which is removed here as a redundant line in the split
+	// moves config
+	movesSplit = movesSplit[:len(movesSplit)-1]
 	for i := 0; i < len(movesSplit); i++ {
 		moves = append(moves, emptyMove)
 	}
