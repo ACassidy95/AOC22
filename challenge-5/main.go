@@ -83,7 +83,7 @@ func getStackCount(crateNumbers string) int {
 	var stackCount int
 	st := strings.Split(crateNumbers, "")
 	for _, s := range st {
-		if _, err := strconv.Atoi(s); err != nil {
+		if _, err := strconv.Atoi(s); err == nil {
 			stackCount++
 		} else {
 			continue
