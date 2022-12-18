@@ -7,7 +7,8 @@ import (
 	"os"
 )
 
-var windowSize = 4
+const PACKET_WINDOW_SIZE = 4
+const MESSAGE_WINDOW_SIZE = 14
 
 func main() {
 	file, err := os.Open(os.Args[1])
@@ -16,24 +17,24 @@ func main() {
 		os.Exit(1)
 	}
 	signal := readInput(file)
-	packetStart := findEndOfPacketStartMarker(signal)
-	fmt.Printf("Packet starts after character %d\n", packetStart)
+	packetStart := findEndOfProtocolPortionStartMarker(signal, PACKET_WINDOW_SIZE)
+	messageStart := findEndOfProtocolPortionStartMarker(signal, MESSAGE_WINDOW_SIZE)
+	fmt.Printf("Packet starts after character %d\nMessage starts after character %d\n", packetStart, messageStart)
 }
 
-func readInput(F *os.File) string {
+func readInput(F *os.File) []byte {
 	var signal string
 	scanner := bufio.NewScanner(F)
 	for scanner.Scan() {
 		signal += scanner.Text()
 	}
-	return signal
+	return []byte(signal)
 }
 
-func findEndOfPacketStartMarker(signal string) int {
+func findEndOfProtocolPortionStartMarker(signal []byte, windowSize int) int {
 	var eopsIdx int
-	signalBytes := []byte(signal)
-	for i := 0; i < len(signalBytes)-windowSize; i++ {
-		window := signalBytes[i : i+windowSize]
+	for i := 0; i < len(signal)-windowSize; i++ {
+		window := signal[i : i+windowSize]
 		uniqueWindowChars := make(map[byte]bool)
 		for _, char := range window {
 			// If the current char in the window already exists in the
