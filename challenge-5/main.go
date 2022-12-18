@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	// Challenge 5-1
 	file, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
@@ -20,13 +21,20 @@ func main() {
 	file.Close()
 	crates := parseCrateConfig(crateConfig)
 	moves := parseMoveConfig(moveConfig)
-
-	// Challenge 5-1
 	movedCrates := moveCratesOneByOne(moves, crates)
 	topCrates := getTopCrates(movedCrates)
 	fmt.Printf("The top crates are: %s\n", topCrates)
 
 	// Challenge 5-2
+	file, err = os.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+	crateConfig, moveConfig = readInput(file)
+	file.Close()
+	crates = parseCrateConfig(crateConfig)
+	moves = parseMoveConfig(moveConfig)
 	movedCrates = moveCratesInGroups(moves, crates)
 	topCrates = getTopCrates(movedCrates)
 	fmt.Printf("The top crates are: %s\n", topCrates)
@@ -156,10 +164,29 @@ func moveSingleCrate(srcStack, destStack []string) ([]string, []string) {
 }
 
 func moveCratesInGroups(moves [][]int, crates [][]string) [][]string {
+	for _, move := range moves {
+		nCrates := move[0]
+		src := move[1]
+		dest := move[2]
+
+		srcStack := crates[src]
+		destStack := crates[dest]
+		srcStack, destStack = moveCrateGroup(srcStack, destStack, nCrates)
+		crates[src] = srcStack
+		crates[dest] = destStack
+	}
 	return crates
 }
 
 func moveCrateGroup(srcStack, destStack []string, numCrates int) ([]string, []string) {
+	crates := srcStack[len(srcStack)-numCrates:]
+	srcStack = srcStack[:len(srcStack)-numCrates]
+	// Crates acts as a queue for the lifted crates
+	// which can simply be appended to destStack in order
+	// for the desired effect
+	for _, crate := range crates {
+		destStack = append(destStack, crate)
+	}
 	return srcStack, destStack
 }
 
