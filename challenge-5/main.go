@@ -150,5 +150,9 @@ func moveCrate(srcStack, destStack []string) ([]string, []string) {
 
 func getTopCrates(crateStacks [][]string) string {
 	var topCrates bytes.Buffer
+	for _, stack := range crateStacks {
+		topCrate := stack[len(stack)-1]
+		topCrates.WriteString(topCrate)
+	}
 	return topCrates.String()
 }
