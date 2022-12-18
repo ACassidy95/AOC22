@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-const crateWidth = 3
-
 func main() {
 	file, err := os.Open(os.Args[1])
 	if err != nil {
@@ -49,13 +47,14 @@ func readInput(F *os.File) (string, string) {
 func parseCrateConfig(crateConfig string) [][]string {
 	var crates [][]string
 	var emptyStack []string
-	crateStrata := strings.Split(crateConfig, "\n")
-	crateNums := crateStrata[len(crateStrata)]
-	stackCount := len(strings.Split(crateNums, " "))
 
+	crateStrata := strings.Split(crateConfig, "\n")
 	// Remove line of stack numbers from configs since it is saved
 	// in crateNums
-	crateStrata = crateStrata[:len(crateStrata)-1]
+	crateNums := crateStrata[len(crateStrata)-2]
+	crateStrata = crateStrata[:len(crateStrata)-2]
+
+	stackCount := getStackCount(crateNums)
 
 	for i := 0; i < stackCount; i++ {
 		crates = append(crates, emptyStack)
@@ -78,6 +77,19 @@ func parseCrateConfig(crateConfig string) [][]string {
 	}
 
 	return crates
+}
+
+func getStackCount(crateNumbers string) int {
+	var stackCount int
+	st := strings.Split(crateNumbers, "")
+	for _, s := range st {
+		if _, err := strconv.Atoi(s); err != nil {
+			stackCount++
+		} else {
+			continue
+		}
+	}
+	return stackCount
 }
 
 func parseMoveConfig(moveConfig string) [][]int {
