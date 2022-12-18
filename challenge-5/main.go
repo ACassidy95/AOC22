@@ -72,6 +72,7 @@ func parseCrateConfig(crateConfig string) [][]string {
 				stackIdx, _ := strconv.Atoi(string(crateNums[idx]))
 				crateStack := crates[stackIdx-1]
 				crateStack = append([]string{string(char)}, crateStack...)
+				crates[stackIdx-1] = crateStack
 			}
 		}
 	}
