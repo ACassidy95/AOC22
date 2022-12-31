@@ -14,7 +14,7 @@ const CMD_MARKER = "$"
 
 type Node struct {
 	name     string
-	file     bool
+	isFile   bool
 	size     int
 	parent   *Node
 	children map[string]Node
@@ -29,16 +29,16 @@ func newNode(name string, options ...func(*Node)) *Node {
 }
 
 func nodeIsFile(node *Node) {
-	node.file = true
+	node.isFile = true
 }
 
-func nodeSize(size int) func(*Node) {
+func nodeWithSize(size int) func(*Node) {
 	return func(n *Node) {
 		n.size = size
 	}
 }
 
-func nodeParent(parent Node) func(*Node) {
+func nodeWithParent(parent Node) func(*Node) {
 	return func(n *Node) {
 		n.parent = &parent
 	}
@@ -48,7 +48,7 @@ func (n *Node) String() string {
 	var node strings.Builder
 	var nodeParent string
 	nodeName := n.name
-	nodeIsFile := strconv.FormatBool(n.file)
+	nodeIsFile := strconv.FormatBool(n.isFile)
 	nodeSize := n.size
 	if n.parent != nil {
 		nodeParent = (*n.parent).name
@@ -72,6 +72,8 @@ func main() {
 	input := readInputFile(file)
 	file.Close()
 	filesystem := parseInput(input)
+	fmt.Printf("Filesystem root: %s\n", filesystem.String())
+	calculateFileSize(filesystem)
 	fmt.Printf("Filesystem root: %s\n", filesystem.String())
 }
 
@@ -145,11 +147,24 @@ func createFile(node *Node, args ...string) {
 	var newFile *Node
 	fname := args[1]
 	if args[0] == "dir" {
-		newFile = newNode(fname, nodeParent(*node))
+		newFile = newNode(fname, nodeWithParent(*node))
 		node.children[fname] = *newFile
 	} else {
 		size, _ := strconv.Atoi(args[0])
-		newFile = newNode(fname, nodeIsFile, nodeSize(size), nodeParent(*node))
+		newFile = newNode(fname, nodeIsFile, nodeWithSize(size), nodeWithParent(*node))
 	}
 	node.children[fname] = *newFile
+}
+
+func calculateFileSize(file *Node) {
+	var fileSize int
+	for _, f := range file.children {
+		if f.isFile {
+			fileSize += f.size
+		} else {
+			calculateFileSize(&f)
+			fileSize += f.size
+		}
+	}
+	file.size = fileSize
 }
